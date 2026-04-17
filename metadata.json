@@ -1,0 +1,6 @@
+{
+  "name": "مبدل و ویرایشگر پیشرفته تصویر",
+  "description": "An advanced, glassmorphic image converter and editor for Farsi users featuring batch processing, cropping, and classic computer vision algorithms.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
