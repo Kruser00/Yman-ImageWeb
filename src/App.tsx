@@ -50,10 +50,15 @@ function ConverterWorkspace() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const selectedImage = images.find(img => img.id === selectedId);
 
-  // SEO Text Dynamic Injection & Default Settings Override
+  // SEO Text Dynamic Injection, Meta Tags, JSON-LD Structured Data & Default Settings Override
   useEffect(() => {
+    let metaDescription = 'کامل‌ترین ابزار آنلاین برای تغییر سایز، برش، اعمال فیلتر، تغییر فرمت به صورت دسته‌ای و پشتیبانی از فرمت‌های نسل جدید از جمله HEIC, WEBP, AVIF.';
+    let metaKeywords = 'ویرایشگر عکس, تغییر سایز عکس, مبدل تصویر, ابزار آنلاین ویرایش عکس, heic to jpg, webp to png';
+
     if (sourceParam && targetParam) {
       document.title = `تبدیل ${sourceParam} به ${targetParam} - آنلاین و رایگان`;
+      metaDescription = `بهترین ابزار برای تبدیل سریع، رایگان و بدون افت کیفیت تصاویر ${sourceParam} به ${targetParam}. هم‌اکنون به صورت دسته‌ای و آنلاین فرمت‌های خود را تغییر دهید.`;
+      metaKeywords = `تبدیل ${sourceParam} به ${targetParam}, مبدل ${sourceParam}, تغییر فرمت ${targetParam}, ویرایشگر عکس آنلاین`;
       
       const matchedMime = SUPPORTED_FORMATS.find(f => f.label === targetParam)?.mime;
       if (matchedMime) {
@@ -62,6 +67,60 @@ function ConverterWorkspace() {
     } else {
       document.title = 'مبدل پیشرفته تصویر - با پشتیبانی از HEIC، WEBP و ویرایش عکس';
     }
+
+    // Safely update Meta Description
+    let metaDescEl = document.querySelector('meta[name="description"]');
+    if (!metaDescEl) {
+      metaDescEl = document.createElement('meta');
+      metaDescEl.setAttribute('name', 'description');
+      document.head.appendChild(metaDescEl);
+    }
+    metaDescEl.setAttribute('content', metaDescription);
+
+    // Safely update Meta Keywords
+    let metaKeywordsEl = document.querySelector('meta[name="keywords"]');
+    if (!metaKeywordsEl) {
+      metaKeywordsEl = document.createElement('meta');
+      metaKeywordsEl.setAttribute('name', 'keywords');
+      document.head.appendChild(metaKeywordsEl);
+    }
+    metaKeywordsEl.setAttribute('content', metaKeywords);
+
+    // Inject JSON-LD Schema (Structured Data)
+    let schemaScript = document.querySelector('#seo-schema-jsonld');
+    if (!schemaScript) {
+      schemaScript = document.createElement('script');
+      schemaScript.setAttribute('type', 'application/ld+json');
+      schemaScript.setAttribute('id', 'seo-schema-jsonld');
+      document.head.appendChild(schemaScript);
+    }
+    
+    // SoftwareApplication Schema (Highly valued by Google for Tools)
+    const schemaData = {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": sourceParam && targetParam ? `ابزار آنلاین تبدیل ${sourceParam} به ${targetParam}` : "محیط ویرایشگر پیشرفته تصویر",
+      "description": metaDescription,
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0.00",
+        "priceCurrency": "IRR"
+      },
+      "featureList": [
+        "تغییر فرمت تصاویر به صورت گروهی",
+        "ویرایش کیفیت و کاهش حجم عکس",
+        "فیلترهای تاریک، روشن، سیاه و سفید",
+        "پردازش و کانولوشن (فیلترهای لبه و شارپ کن)",
+        "پشتیبانی از فرمت‌های HEIC و WEBP"
+      ]
+    };
+    schemaScript.textContent = JSON.stringify(schemaData);
+
+    // Scroll to top when changing tools (important for SPA UX)
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
   }, [sourceParam, targetParam]);
 
   const handleFiles = (files: FileList | File[]) => {
